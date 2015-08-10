@@ -1,0 +1,51 @@
+注：只考虑主元
+
+
+
+//Pseudo-code
+
+// 处理出上三角矩阵
+For i = 1..N
+    Flag ← False
+    For j = i..M                // 从第i行开始，找到第i列不等于0的行j
+        If a[j][i] != 0 Then
+            Swap(j, i)          // 交换第i行和第j行
+            Flag ← True
+            Break
+        End If
+    End For
+    // 若无法找到，则存在多个解
+    If (not Flag) Then
+        manySolutionsFlag ← True // 出现了秩小于N的情况
+        continue;
+    End If
+    // 消除第i+1行到第M行的第i列
+    For j = i+1 .. M
+        a[j][] ← a[j][] - a[i][] * (a[j][i] / a[i][i])
+        b[j] ← b[j] - b[i] * (a[j][i] / a[i][i])
+    End For
+End For 
+
+// 检查是否无解，即存在 0 = x 的情况
+For i = 1..M
+    If (第i行系数均为0 and (b[i] != 0)) Then
+        return "No solutions"
+    End If
+End For
+
+// 判定多解
+If (manySolutionsFlag) Then
+	return "Many solutions"
+End If
+
+// 此时存在唯一解
+// 由于每一行都比前一行少一个系数，所以在M行中只有前N行有系数
+// 解析来从第N行开始处理每一行的解
+For i = N .. 1
+    // 利用已经计算出的结果，将第i行中第i+1列至第N列的系数消除
+    For j = i + 1 .. N
+        b[i] ← b[i] - a[i][j] * value[j]
+        a[i][j] ← 0
+    End For
+    value[i] ← b[i] / a[i][i]
+End For
